@@ -22,6 +22,34 @@ export async function calculateRoute(start, destination) {
   return data;
 }
 
+export async function calculateRouteV2(start, destination) {
+  const response = await fetch(`${API_BASE_URL}/route/v2`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ start, destination }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.detail || 'Failed to calculate route V2.');
+  }
+  return data;
+}
+
+export async function calculateRouteAStar(start, destination) {
+  const response = await fetch(`${API_BASE_URL}/route/astar`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ start, destination }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.detail || 'Failed to calculate A* route.');
+  }
+  return data;
+}
+
 export async function calculateMultiStopRoute(start, stops, destination) {
   const response = await fetch(`${API_BASE_URL}/route/multi-stop`, {
     method: 'POST',

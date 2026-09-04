@@ -8,6 +8,8 @@ export default function RouteForm({
   setDestinationNode,
   stops,
   setStops,
+  algorithm,
+  setAlgorithm,
   onSubmit,
   loading,
   onReset
@@ -52,6 +54,28 @@ export default function RouteForm({
         </svg>
         Configure Trip
       </h2>
+
+      {/* Algorithm Selection */}
+      <div className="form-group">
+        <label className="form-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}>
+            <polygon points="12 2 2 7 12 12 22 7 12 2" />
+            <polyline points="2 17 12 22 22 17" />
+            <polyline points="2 12 12 17 22 12" />
+          </svg>
+          Algorithm Model
+        </label>
+        <select
+          className="form-select"
+          value={algorithm}
+          onChange={(e) => setAlgorithm(e.target.value)}
+          disabled={loading}
+        >
+          <option value="v1">Dijkstra V1 (Phase 1 Array Scan)</option>
+          <option value="v2">Dijkstra V2 (Phase 2 MinHeap)</option>
+          <option value="astar">A* Pathfinding (Geographic Heuristic)</option>
+        </select>
+      </div>
 
       {/* Start Selection */}
       <div className="form-group">

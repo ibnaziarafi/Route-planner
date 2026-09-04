@@ -3,7 +3,13 @@ import Header from './components/Header';
 import RouteForm from './components/RouteForm';
 import GraphCanvas from './components/GraphCanvas';
 import RouteSummary from './components/RouteSummary';
-import { fetchGraph, calculateRoute, calculateMultiStopRoute } from './services/api';
+import {
+  fetchGraph,
+  calculateRoute,
+  calculateRouteV2,
+  calculateRouteAStar,
+  calculateMultiStopRoute,
+} from './services/api';
 
 export default function App() {
   const [graphData, setGraphData] = useState({ nodes: [], edges: [], positions: {} });
@@ -13,6 +19,7 @@ export default function App() {
   const [startNode, setStartNode] = useState('A');
   const [destinationNode, setDestinationNode] = useState('F');
   const [stops, setStops] = useState(['D', 'C']);
+  const [algorithm, setAlgorithm] = useState('v1');
 
   // Results State
   const [routeResult, setRouteResult] = useState(null);
@@ -46,6 +53,10 @@ export default function App() {
       let result;
       if (stops.length > 0) {
         result = await calculateMultiStopRoute(startNode, stops, destinationNode);
+      } else if (algorithm === 'v2') {
+        result = await calculateRouteV2(startNode, destinationNode);
+      } else if (algorithm === 'astar') {
+        result = await calculateRouteAStar(startNode, destinationNode);
       } else {
         result = await calculateRoute(startNode, destinationNode);
       }
@@ -57,7 +68,7 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  }, [startNode, destinationNode, stops]);
+  }, [startNode, destinationNode, stops, algorithm]);
 
   // Automatically calculate initial route once graph is loaded
   useEffect(() => {
@@ -70,6 +81,7 @@ export default function App() {
     setStartNode('A');
     setDestinationNode('F');
     setStops(['D', 'C']);
+    setAlgorithm('v1');
     setRouteResult(null);
   };
 
@@ -93,6 +105,8 @@ export default function App() {
             setDestinationNode={setDestinationNode}
             stops={stops}
             setStops={setStops}
+            algorithm={algorithm}
+            setAlgorithm={setAlgorithm}
             onSubmit={handleCalculateRoute}
             loading={loading}
             onReset={handleReset}
@@ -111,6 +125,7 @@ export default function App() {
           <RouteSummary
             routeResult={routeResult}
             isMultiStop={stops.length > 0}
+            algorithm={algorithm}
           />
         </section>
       </main>

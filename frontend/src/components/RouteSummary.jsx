@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function RouteSummary({ routeResult, isMultiStop }) {
+export default function RouteSummary({ routeResult, isMultiStop, algorithm }) {
   if (!routeResult) {
     return (
       <div className="route-summary-card placeholder">
@@ -17,8 +17,14 @@ export default function RouteSummary({ routeResult, isMultiStop }) {
     );
   }
 
-  const { path, route, distance, error } = routeResult;
+  const { path, route, distance, error, algorithm: serverAlgo } = routeResult;
   const pathNodes = route || path || [];
+
+  const algorithmLabel = serverAlgo || (
+    algorithm === 'v2' ? 'Dijkstra V2 (MinHeap)' :
+    algorithm === 'astar' ? 'A* (Geographic Heuristic)' :
+    'Dijkstra V1 (Array Scan)'
+  );
 
   if (error) {
     return (
@@ -39,7 +45,12 @@ export default function RouteSummary({ routeResult, isMultiStop }) {
           </svg>
           Calculated Route Results
         </h2>
-        <span className="badge-type">{isMultiStop ? 'Multi-Stop Route' : 'Direct Route'}</span>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <span className="badge-type" style={{ background: '#1e293b', color: '#60a5fa', border: '1px solid #3b82f6' }}>
+            {algorithmLabel}
+          </span>
+          <span className="badge-type">{isMultiStop ? 'Multi-Stop Route' : 'Direct Route'}</span>
+        </div>
       </div>
 
       <div className="results-grid">
