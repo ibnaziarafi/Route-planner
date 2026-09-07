@@ -8,6 +8,7 @@ from backend.pdp.models import Driver, Order, Solution, StopType
 from backend.pdp.distance_matrix import DistanceMatrix
 from backend.pdp.scratch_solver import solve as scratch_solve
 from backend.pdp.ortools_solver import solve as ortools_solve
+from backend.pdp.pyvrp_solver import solve as pyvrp_solve
 
 
 class PDPService:
@@ -39,6 +40,8 @@ class PDPService:
         # Solve PDP
         if algorithm == "ortools":
             solution = ortools_solve(orders, drivers, dm, time_limit_seconds)
+        elif algorithm == "pyvrp":
+            solution = pyvrp_solve(orders, drivers, dm, time_limit_seconds)
         else:
             solution = scratch_solve(orders, drivers, dm)
 

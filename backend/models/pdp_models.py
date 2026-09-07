@@ -16,7 +16,7 @@ class PDPOrderRequest(BaseModel):
 
 class PDPRequest(BaseModel):
     graph_type: str = Field("medium", pattern="^(small|medium)$")
-    algorithm: str = Field("scratch", pattern="^(scratch|ortools)$")
+    algorithm: str = Field("scratch", pattern="^(scratch|ortools|pyvrp)$")
     time_limit_seconds: int = Field(5, ge=1, le=60)
     drivers: list[PDPDriverRequest] = Field(..., min_length=1)
     orders: list[PDPOrderRequest] = Field(default_factory=list)

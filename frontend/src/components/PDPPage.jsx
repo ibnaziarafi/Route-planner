@@ -105,6 +105,7 @@ export default function PDPPage() {
                 <select className="form-select compact-select" value={algorithm} onChange={(event) => setAlgorithm(event.target.value)} aria-label="PDP algorithm">
                   <option value="scratch">From-scratch heuristic</option>
                   <option value="ortools">Google OR-Tools</option>
+                  <option value="pyvrp">PyVRP hybrid genetic search</option>
                 </select>
               </div>
             </div>
