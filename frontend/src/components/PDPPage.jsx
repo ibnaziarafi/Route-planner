@@ -52,8 +52,15 @@ export default function PDPPage() {
 
   const addOrder = () => {
     const id = Math.max(0, ...orders.map((order) => order.order_id)) + 1;
-    const first = graphData.nodes[1] || 'B';
-    const last = graphData.nodes[2] || 'C';
+    const nodeCount = graphData.nodes.length;
+    const pickupIndex = nodeCount > 1 ? id % nodeCount : 0;
+    const dropoffIndex = nodeCount > 1 ? (id * 3 + 1) % nodeCount : 0;
+    const first = graphData.nodes[pickupIndex] || 'B';
+    const last = graphData.nodes[dropoffIndex] || 'C';
+    if (first === last && nodeCount > 1) {
+      setOrders([...orders, makeOrder(id, first, graphData.nodes[(dropoffIndex + 1) % nodeCount])]);
+      return;
+    }
     setOrders([...orders, makeOrder(id, first, last)]);
   };
 
