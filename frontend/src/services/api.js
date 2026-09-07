@@ -64,11 +64,11 @@ export async function calculateMultiStopRoute(start, stops, destination, graphTy
   return data;
 }
 
-export async function solvePDP(drivers, orders, graphType = 'medium') {
+export async function solvePDP(drivers, orders, graphType = 'medium', algorithm = 'scratch', timeLimitSeconds = 5) {
   const response = await fetch(`${API_BASE_URL}/pdp/solve`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ graph_type: graphType, drivers, orders }),
+    body: JSON.stringify({ graph_type: graphType, algorithm, time_limit_seconds: timeLimitSeconds, drivers, orders }),
   });
 
   const data = await response.json();

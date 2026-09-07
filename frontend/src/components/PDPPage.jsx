@@ -13,6 +13,7 @@ const makeOrder = (id, pickupNode = 'B', dropoffNode = 'H') => ({
 
 export default function PDPPage() {
   const [graphType, setGraphType] = useState('medium');
+  const [algorithm, setAlgorithm] = useState('scratch');
   const [graphData, setGraphData] = useState({ nodes: [], edges: [], positions: {} });
   const [drivers, setDrivers] = useState([makeDriver(1, 'A')]);
   const [orders, setOrders] = useState([makeOrder(1, 'B', 'H')]);
@@ -60,7 +61,7 @@ export default function PDPPage() {
     setLoading(true);
     setError(null);
     try {
-      const nextResult = await solvePDP(drivers, orders, graphType);
+      const nextResult = await solvePDP(drivers, orders, graphType, algorithm);
       setResult(nextResult);
       if (nextResult.routes?.length) setSelectedDriverId(nextResult.routes[0].driver_id);
     } catch (err) {
@@ -89,10 +90,16 @@ export default function PDPPage() {
           <section className="route-form-card pdp-form-card">
             <div className="card-header">
               <h2 className="card-title">PDP setup</h2>
-              <select className="form-select compact-select" value={graphType} onChange={(event) => setGraphType(event.target.value)}>
-                <option value="small">Small graph</option>
-                <option value="medium">Medium graph</option>
-              </select>
+              <div className="pdp-header-controls">
+                <select className="form-select compact-select" value={graphType} onChange={(event) => setGraphType(event.target.value)}>
+                  <option value="small">Small graph</option>
+                  <option value="medium">Medium graph</option>
+                </select>
+                <select className="form-select compact-select" value={algorithm} onChange={(event) => setAlgorithm(event.target.value)} aria-label="PDP algorithm">
+                  <option value="scratch">From-scratch heuristic</option>
+                  <option value="ortools">Google OR-Tools</option>
+                </select>
+              </div>
             </div>
 
             <div className="pdp-section">
@@ -142,7 +149,7 @@ export default function PDPPage() {
         <section className="main-content-column">
           <GraphCanvas graphData={graphData} routePath={routePath} startNode={selectedRoute?.start_node} stops={routeStops} />
           <section className="route-form-card pdp-results">
-            <div className="card-header"><h2 className="card-title">Driver routes</h2><span className="pdp-total">Fleet: {result ? `${result.total_distance} km` : 'Not optimized'}</span></div>
+            <div className="card-header"><h2 className="card-title">Driver routes</h2><span className="pdp-total">{result ? `${result.algorithm} · ${result.total_distance} km` : 'Not optimized'}</span></div>
             {result?.routes?.length ? (
               <>
                 <div className="driver-tabs">

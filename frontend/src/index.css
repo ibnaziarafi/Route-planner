@@ -678,6 +678,13 @@ body {
   font-size: 0.8rem;
 }
 
+.pdp-header-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .pdp-section {
   display: flex;
   flex-direction: column;

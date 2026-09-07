@@ -7,6 +7,7 @@ from backend.algorithms.dijkstra_v2 import dijkstra_v2
 from backend.pdp.models import Driver, Order, Solution, StopType
 from backend.pdp.distance_matrix import DistanceMatrix
 from backend.pdp.scratch_solver import solve as scratch_solve
+from backend.pdp.ortools_solver import solve as ortools_solve
 
 
 class PDPService:
@@ -14,7 +15,13 @@ class PDPService:
         self.graph_type = graph_type
         self.graph, self.positions = get_graph_and_positions(graph_type)
 
-    def solve_pdp(self, drivers: list[Driver], orders: list[Order]) -> dict:
+    def solve_pdp(
+        self,
+        drivers: list[Driver],
+        orders: list[Order],
+        algorithm: str = "scratch",
+        time_limit_seconds: int = 5,
+    ) -> dict:
         """
         Solves the PDP routing problem for given drivers and orders.
         Returns solution routes, unassigned orders, total distance, and detailed paths for visual rendering.
@@ -30,7 +37,10 @@ class PDPService:
         dm = DistanceMatrix(relevant_nodes, self.graph)
 
         # Solve PDP
-        solution: Solution = scratch_solve(orders, drivers, dm)
+        if algorithm == "ortools":
+            solution = ortools_solve(orders, drivers, dm, time_limit_seconds)
+        else:
+            solution = scratch_solve(orders, drivers, dm)
 
         # Expand stop sequences into turn-by-turn road paths
         detailed_routes = []
@@ -79,6 +89,7 @@ class PDPService:
             })
 
         return {
+            "algorithm": algorithm,
             "total_distance": round(solution.total_distance, 2),
             "unassigned_orders": solution.unassigned_orders,
             "routes": detailed_routes,

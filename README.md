@@ -10,7 +10,8 @@ A full-stack route planning web application powered by **custom Data Structures 
 - **Custom Dijkstra Shortest Path**: Pure Python implementation built from scratch without external pathfinding libraries.
 - **Custom Doubly Linked List**: `RouteLinkedList` and `RouteNode` structure managing ordered route stops (`append`, `insert`, `remove`, `clear`, `get_all`, and segment concatenation).
 - **Multi-Stop Route Calculation**: Calculates multi-stop routes (`Start -> Stop1 -> ... -> StopN -> Destination`) segment-by-segment using Dijkstra and combines them into a unified Doubly Linked List.
-- **FastAPI REST API**: Clean API endpoints (`GET /graph`, `POST /route`, `POST /route/multi-stop`) with automatic Pydantic request/response validation.
+- **FastAPI REST API**: Clean API endpoints (`GET /graph`, `POST /route`, `POST /route/multi-stop`, `POST /pdp/solve`) with automatic Pydantic request/response validation.
+- **Pickup & Delivery Optimization**: Multi-driver parcel routing with a from-scratch heuristic solver or Google OR-Tools, selectable from the PDP frontend page at `/pdp`.
 - **100% Test Coverage**: Comprehensive pytest suite (18 automated tests) validating Graph data structures, Dijkstra algorithm edge cases, Linked List memory operations, and API endpoints.
 - **Interactive SVG Map & React UI**: Modern dark theme glassmorphism interface featuring node selection, dynamic stop ordering (add, remove, move up/down), glowing SVG route path visualization, and sequence step badges.
 
@@ -68,7 +69,7 @@ python -m venv venv
 .\venv\Scripts\activate   # On Windows (or source venv/bin/activate on Linux/Mac)
 
 # Install backend dependencies
-pip install fastapi uvicorn pydantic pytest httpx
+pip install fastapi uvicorn pydantic pytest httpx ortools
 
 # Run unit tests
 pytest backend/tests

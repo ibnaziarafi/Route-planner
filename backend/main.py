@@ -127,7 +127,12 @@ def solve_pdp(request: PDPRequest):
     service = PDPService(request.graph_type)
     drivers = [Driver(**driver.model_dump()) for driver in request.drivers]
     orders = [Order(**order.model_dump()) for order in request.orders]
-    return service.solve_pdp(drivers, orders)
+    return service.solve_pdp(
+        drivers,
+        orders,
+        algorithm=request.algorithm,
+        time_limit_seconds=request.time_limit_seconds,
+    )
 
 if __name__ == "__main__":
     import uvicorn
