@@ -15,7 +15,8 @@ export default function App() {
   const [graphData, setGraphData] = useState({ nodes: [], edges: [], positions: {} });
   const [isConnected, setIsConnected] = useState(false);
 
-  // Form State initialized with prompt example defaults (A -> [D, C] -> F)
+  // Form State
+  const [graphType, setGraphType] = useState('small');
   const [startNode, setStartNode] = useState('A');
   const [destinationNode, setDestinationNode] = useState('F');
   const [stops, setStops] = useState(['D', 'C']);
@@ -26,21 +27,37 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Load graph structure from FastAPI backend
+  // Load graph structure from FastAPI backend when graphType changes
   useEffect(() => {
     async function loadGraph() {
       try {
-        const data = await fetchGraph();
+        setLoading(true);
+        const data = await fetchGraph(graphType);
         setGraphData(data);
         setIsConnected(true);
+        setError(null);
+
+        // Adjust default nodes for medium graph
+        if (graphType === 'medium') {
+          setStartNode('A');
+          setDestinationNode('T');
+          setStops(['H', 'N']);
+        } else {
+          setStartNode('A');
+          setDestinationNode('F');
+          setStops(['D', 'C']);
+        }
+        setRouteResult(null);
       } catch (err) {
         console.error('Failed to load graph:', err);
         setIsConnected(false);
         setError('Cannot connect to FastAPI backend server. Ensure backend is running on port 8000.');
+      } finally {
+        setLoading(false);
       }
     }
     loadGraph();
-  }, []);
+  }, [graphType]);
 
   // Handle Route Calculation
   const handleCalculateRoute = useCallback(async () => {
@@ -52,13 +69,13 @@ export default function App() {
     try {
       let result;
       if (stops.length > 0) {
-        result = await calculateMultiStopRoute(startNode, stops, destinationNode);
+        result = await calculateMultiStopRoute(startNode, stops, destinationNode, graphType);
       } else if (algorithm === 'v2') {
-        result = await calculateRouteV2(startNode, destinationNode);
+        result = await calculateRouteV2(startNode, destinationNode, graphType);
       } else if (algorithm === 'astar') {
-        result = await calculateRouteAStar(startNode, destinationNode);
+        result = await calculateRouteAStar(startNode, destinationNode, graphType);
       } else {
-        result = await calculateRoute(startNode, destinationNode);
+        result = await calculateRoute(startNode, destinationNode, graphType);
       }
       setRouteResult(result);
     } catch (err) {
@@ -68,7 +85,7 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  }, [startNode, destinationNode, stops, algorithm]);
+  }, [startNode, destinationNode, stops, algorithm, graphType]);
 
   // Automatically calculate initial route once graph is loaded
   useEffect(() => {
@@ -78,9 +95,15 @@ export default function App() {
   }, [isConnected, graphData, routeResult, handleCalculateRoute]);
 
   const handleReset = () => {
-    setStartNode('A');
-    setDestinationNode('F');
-    setStops(['D', 'C']);
+    if (graphType === 'medium') {
+      setStartNode('A');
+      setDestinationNode('T');
+      setStops(['H', 'N']);
+    } else {
+      setStartNode('A');
+      setDestinationNode('F');
+      setStops(['D', 'C']);
+    }
     setAlgorithm('v1');
     setRouteResult(null);
   };
@@ -107,6 +130,8 @@ export default function App() {
             setStops={setStops}
             algorithm={algorithm}
             setAlgorithm={setAlgorithm}
+            graphType={graphType}
+            setGraphType={setGraphType}
             onSubmit={handleCalculateRoute}
             loading={loading}
             onReset={handleReset}

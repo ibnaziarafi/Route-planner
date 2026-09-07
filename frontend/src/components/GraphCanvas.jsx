@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 export default function GraphCanvas({ graphData, routePath, startNode, destinationNode, stops }) {
   if (!graphData || !graphData.nodes) {
@@ -12,26 +12,54 @@ export default function GraphCanvas({ graphData, routePath, startNode, destinati
 
   const { nodes, edges, positions } = graphData;
 
+  // Determine dynamic SVG viewBox bounding box based on active node positions
+  const viewBox = useMemo(() => {
+    const posList = Object.values(positions || {});
+    if (posList.length === 0) return "0 0 700 400";
+
+    const xs = posList.map(p => p.x);
+    const ys = posList.map(p => p.y);
+
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+
+    const padding = 55; // Padding for node radius & text labels
+    const width = maxX - minX + padding * 2;
+    const height = maxY - minY + padding * 2;
+    const x = minX - padding;
+    const y = minY - padding;
+
+    return `${x} ${y} ${width} ${height}`;
+  }, [positions]);
+
   // Determine which edges are in the active route path
-  const routeEdgesSet = new Set();
-  if (routePath && routePath.length > 1) {
-    for (let i = 0; i < routePath.length - 1; i++) {
-      const u = routePath[i];
-      const v = routePath[i + 1];
-      const key = [u, v].sort().join('-');
-      routeEdgesSet.add(key);
+  const routeEdgesSet = useMemo(() => {
+    const set = new Set();
+    if (routePath && routePath.length > 1) {
+      for (let i = 0; i < routePath.length - 1; i++) {
+        const u = routePath[i];
+        const v = routePath[i + 1];
+        const key = [u, v].sort().join('-');
+        set.add(key);
+      }
     }
-  }
+    return set;
+  }, [routePath]);
 
   // Determine node step indexes in path
-  const nodeSequenceMap = {};
-  if (routePath) {
-    routePath.forEach((node, idx) => {
-      if (nodeSequenceMap[node] === undefined) {
-        nodeSequenceMap[node] = idx + 1;
-      }
-    });
-  }
+  const nodeSequenceMap = useMemo(() => {
+    const map = {};
+    if (routePath) {
+      routePath.forEach((node, idx) => {
+        if (map[node] === undefined) {
+          map[node] = idx + 1;
+        }
+      });
+    }
+    return map;
+  }, [routePath]);
 
   return (
     <div className="graph-canvas-card">
@@ -44,7 +72,7 @@ export default function GraphCanvas({ graphData, routePath, startNode, destinati
             <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
             <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
           </svg>
-          Interactive Road Network Graph
+          Interactive Road Network Graph ({nodes.length} Nodes)
         </h2>
         <div className="graph-legend">
           <span className="legend-item"><span className="legend-dot active-edge"></span> Route Path</span>
@@ -53,7 +81,7 @@ export default function GraphCanvas({ graphData, routePath, startNode, destinati
       </div>
 
       <div className="svg-container">
-        <svg viewBox="0 0 700 400" className="graph-svg">
+        <svg viewBox={viewBox} className="graph-svg" preserveAspectRatio="xMidYMid meet">
           {/* Defs for gradients & filters */}
           <defs>
             <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -132,12 +160,12 @@ export default function GraphCanvas({ graphData, routePath, startNode, destinati
               <g key={`node-${node}`} className="node-group" transform={`translate(${pos.x}, ${pos.y})`}>
                 {/* Pulse ring for active route nodes */}
                 {isInRoute && (
-                  <circle r="28" className="node-pulse-ring" />
+                  <circle r="26" className="node-pulse-ring" />
                 )}
 
                 {/* Main Node Circle */}
                 <circle
-                  r="22"
+                  r="20"
                   className={nodeClass}
                   filter={isInRoute ? 'url(#glow)' : undefined}
                 />
@@ -149,7 +177,7 @@ export default function GraphCanvas({ graphData, routePath, startNode, destinati
 
                 {/* Sequence badge if in route */}
                 {sequenceNum && (
-                  <g transform="translate(14, -14)">
+                  <g transform="translate(13, -13)">
                     <circle r="9" className="sequence-badge-bg" />
                     <text y="3" textAnchor="middle" className="sequence-badge-text">
                       {sequenceNum}

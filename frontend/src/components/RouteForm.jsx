@@ -10,6 +10,8 @@ export default function RouteForm({
   setStops,
   algorithm,
   setAlgorithm,
+  graphType,
+  setGraphType,
   onSubmit,
   loading,
   onReset
@@ -54,6 +56,27 @@ export default function RouteForm({
         </svg>
         Configure Trip
       </h2>
+
+      {/* Graph Size Selection */}
+      <div className="form-group">
+        <label className="form-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}>
+            <circle cx="6" cy="6" r="3" />
+            <circle cx="18" cy="18" r="3" />
+            <line x1="8.5" y1="8.5" x2="15.5" y2="15.5" />
+          </svg>
+          Graph Network Size
+        </label>
+        <select
+          className="form-select"
+          value={graphType}
+          onChange={(e) => setGraphType(e.target.value)}
+          disabled={loading}
+        >
+          <option value="small">Small Graph (6 Nodes)</option>
+          <option value="medium">Medium Graph (20 Nodes)</option>
+        </select>
+      </div>
 
       {/* Algorithm Selection */}
       <div className="form-group">
