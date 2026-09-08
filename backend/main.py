@@ -18,6 +18,7 @@ from backend.graph.graph_data import get_graph_and_positions
 from backend.services.route_service import RouteService
 from backend.services.route_service_v2 import RouteServiceV2
 from backend.real_map.map_router import router as real_map_router
+from backend.real_map_pdp.map_pdp_router import router as real_map_pdp_router
 
 app = FastAPI(
     title="Route Planner API - Phase 2",
@@ -35,6 +36,7 @@ app.add_middleware(
 )
 
 app.include_router(real_map_router)
+app.include_router(real_map_pdp_router)
 
 route_service = RouteService()
 route_service_v2 = RouteServiceV2()
