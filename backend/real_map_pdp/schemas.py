@@ -31,6 +31,7 @@ class RealMapPDPStop(BaseModel):
     type: str
     lat: float
     lon: float
+    distance_km: float
 
 
 class RealMapPDPRoute(BaseModel):

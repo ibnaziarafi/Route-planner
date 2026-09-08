@@ -79,6 +79,7 @@ def solve_real_map_pdp(request, graph=None) -> dict:
                 "type": stop.stop_type.value,
                 "lat": position["lat"],
                 "lon": position["lon"],
+                "distance_km": round(segment_distance / 1000, 3),
             })
             current_node = stop.node
 
