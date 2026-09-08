@@ -15,6 +15,11 @@ export default function Header({ isConnected }) {
           <p className="header-subtitle">Graph • Dijkstra Shortest Path • Doubly Linked List</p>
         </div>
       </div>
+      <nav className="header-nav" aria-label="Primary navigation">
+        <a href="/">Routes</a>
+        <a href="/pdp">PDP</a>
+        <a href="/real-map">Real Map</a>
+      </nav>
       <div className="connection-badge">
         <span className={`status-dot ${isConnected ? 'online' : 'offline'}`}></span>
         <span>{isConnected ? 'FastAPI Connected' : 'Connecting to Server...'}</span>

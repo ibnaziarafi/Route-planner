@@ -90,6 +90,22 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+  margin-right: 18px;
+}
+
+.header-nav a {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.header-nav a:hover { color: var(--text-main); }
+
 .status-dot {
   width: 8px;
   height: 8px;

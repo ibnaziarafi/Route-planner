@@ -3,9 +3,10 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import PDPPage from './components/PDPPage.jsx'
+import RealMapPage from './components/RealMapPage.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    {window.location.pathname === '/pdp' ? <PDPPage /> : <App />}
+    {window.location.pathname === '/pdp' ? <PDPPage /> : window.location.pathname === '/real-map' ? <RealMapPage /> : <App />}
   </StrictMode>,
 )
