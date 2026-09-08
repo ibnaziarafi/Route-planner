@@ -1,0 +1,1 @@
+"""Isolated OpenStreetMap routing integration."""
