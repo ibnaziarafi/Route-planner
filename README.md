@@ -13,6 +13,7 @@ A full-stack route planning web application powered by **custom Data Structures 
 - **FastAPI REST API**: Clean API endpoints (`GET /graph`, `POST /route`, `POST /route/multi-stop`, `POST /pdp/solve`) with automatic Pydantic request/response validation.
 - **Pickup & Delivery Optimization**: Multi-driver parcel routing with a from-scratch heuristic, Google OR-Tools, or PyVRP hybrid genetic search solver, selectable from the PDP frontend page at `/pdp`.
 - **Real Map Routing**: Cached Hobart OpenStreetMap driving data with the existing Dijkstra, Dijkstra V2, and A* algorithms, available at `/real-map`.
+- **Real Map PDP**: Coordinate-based drivers and pickup/dropoff orders optimized on the cached Hobart road graph, available at `/real-map-pdp` through `POST /api/real-map-pdp/solve`.
 - **100% Test Coverage**: Comprehensive pytest suite (18 automated tests) validating Graph data structures, Dijkstra algorithm edge cases, Linked List memory operations, and API endpoints.
 - **Interactive SVG Map & React UI**: Modern dark theme glassmorphism interface featuring node selection, dynamic stop ordering (add, remove, move up/down), glowing SVG route path visualization, and sequence step badges.
 
