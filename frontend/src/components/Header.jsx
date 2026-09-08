@@ -19,6 +19,7 @@ export default function Header({ isConnected }) {
         <a href="/">Routes</a>
         <a href="/pdp">PDP</a>
         <a href="/real-map">Real Map</a>
+        <a href="/real-map-pdp">Real Map PDP</a>
       </nav>
       <div className="connection-badge">
         <span className={`status-dot ${isConnected ? 'online' : 'offline'}`}></span>

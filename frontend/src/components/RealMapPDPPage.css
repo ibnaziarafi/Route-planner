@@ -1,0 +1,13 @@
+.real-map-pdp-layout { display: grid; grid-template-columns: 390px minmax(0, 1fr); gap: 24px; }
+.real-map-pdp-panel, .real-map-pdp-view { background: var(--bg-card); border: 1px solid var(--bg-card-border); border-radius: 16px; padding: 24px; }
+.real-map-pdp-panel { display: flex; flex-direction: column; gap: 18px; }
+.real-map-pdp-view { min-height: 700px; padding: 12px; position: relative; }
+.real-map-pdp-map, .real-map-pdp-map .real-map-leaflet { width: 100%; height: 100%; min-height: 676px; border-radius: 11px; overflow: hidden; }
+.pdp-control-section { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+.section-title, .real-pdp-driver > div, .order-title { display: flex; justify-content: space-between; align-items: center; }
+.real-pdp-driver, .real-pdp-order { background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.08); border-radius: 9px; padding: 10px; }
+.real-pdp-driver { display: flex; align-items: center; justify-content: space-between; gap: 10px; }.real-pdp-driver label { color: var(--text-muted); font-size: .75rem; display: flex; gap: 8px; align-items: center; }.real-pdp-driver input { width: 56px; background: #0f172a; color: white; border: 1px solid rgba(255,255,255,.15); border-radius: 6px; padding: 5px; }
+.order-actions { display: flex; gap: 7px; margin-top: 8px; }.pickup-button { color: #fbbf24; }.dropoff-button { color: #fb7185; }
+.real-pdp-selects { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }.real-pdp-selects label { color: var(--text-muted); font-size: .78rem; display: flex; flex-direction: column; gap: 5px; }.real-pdp-selects select { background: #0f172a; color: white; border: 1px solid rgba(255,255,255,.14); border-radius: 8px; padding: 9px; }
+.real-pdp-stats { display: grid; gap: 6px; padding: 14px; background: rgba(9,13,22,.65); border-radius: 10px; color: var(--text-muted); font-size: .82rem; }.real-pdp-stats strong { color: white; font-size: .95rem; }.real-pdp-stats b { color: #34d399; font-size: 1.7rem; }.real-pdp-stats small { color: #93c5fd; }.route-stat { border-top: 1px solid rgba(255,255,255,.08); padding-top: 6px; }
+@media (max-width: 930px) { .real-map-pdp-layout { grid-template-columns: 1fr; } .real-map-pdp-view { min-height: 500px; }.real-map-pdp-map, .real-map-pdp-map .real-map-leaflet { min-height: 476px; } }
