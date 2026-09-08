@@ -12,6 +12,7 @@ A full-stack route planning web application powered by **custom Data Structures 
 - **Multi-Stop Route Calculation**: Calculates multi-stop routes (`Start -> Stop1 -> ... -> StopN -> Destination`) segment-by-segment using Dijkstra and combines them into a unified Doubly Linked List.
 - **FastAPI REST API**: Clean API endpoints (`GET /graph`, `POST /route`, `POST /route/multi-stop`, `POST /pdp/solve`) with automatic Pydantic request/response validation.
 - **Pickup & Delivery Optimization**: Multi-driver parcel routing with a from-scratch heuristic, Google OR-Tools, or PyVRP hybrid genetic search solver, selectable from the PDP frontend page at `/pdp`.
+- **Real Map Routing**: Cached Hobart OpenStreetMap driving data with the existing Dijkstra, Dijkstra V2, and A* algorithms, available at `/real-map`.
 - **100% Test Coverage**: Comprehensive pytest suite (18 automated tests) validating Graph data structures, Dijkstra algorithm edge cases, Linked List memory operations, and API endpoints.
 - **Interactive SVG Map & React UI**: Modern dark theme glassmorphism interface featuring node selection, dynamic stop ordering (add, remove, move up/down), glowing SVG route path visualization, and sequence step badges.
 
@@ -69,7 +70,7 @@ python -m venv venv
 .\venv\Scripts\activate   # On Windows (or source venv/bin/activate on Linux/Mac)
 
 # Install backend dependencies
-pip install fastapi uvicorn pydantic pytest httpx ortools pyvrp
+pip install fastapi uvicorn pydantic pytest httpx ortools pyvrp osmnx
 
 # Run unit tests
 pytest backend/tests
@@ -77,6 +78,8 @@ pytest backend/tests
 # Start FastAPI server
 uvicorn backend.main:app --port 8000 --reload
 ```
+
+The first real-map request provisions `data/maps/hobart_drive.graphml` from OpenStreetMap when the cache is missing. Later requests reuse that local graph.
 Backend server will run at `http://127.0.0.1:8000`. OpenAPI docs available at `http://127.0.0.1:8000/docs`.
 
 ### 3. Frontend Setup
