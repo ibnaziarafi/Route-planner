@@ -1,11 +1,16 @@
 """PyVRP implementation of the multi-driver pickup-and-delivery solver."""
 
 from pyvrp import Model
-from pyvrp._pyvrp import ActivityType
 from pyvrp.stop import MaxRuntime
 
 from backend.pdp.distance_matrix import DistanceMatrix
 from backend.pdp.models import Driver, Order, Route, Solution, Stop, StopType
+
+
+def _activity_name(activity) -> str:
+    """Read activity names across PyVRP versions without private imports."""
+    activity_type = getattr(activity, "type", None)
+    return getattr(activity_type, "name", str(activity_type).split(".")[-1]).upper()
 
 
 def solve(
@@ -76,14 +81,15 @@ def solve(
         driver_id = driver_ids[pyvrp_route.vehicle_type()]
         route = routes[driver_id]
         for activity in pyvrp_route:
-            if activity.type == ActivityType.DEPOT:
+            activity_name = _activity_name(activity)
+            if activity_name == "DEPOT":
                 continue
             _, order = shipments[activity.idx]
-            if activity.type == ActivityType.PICKUP:
+            if activity_name == "PICKUP":
                 route.stops.append(
                     Stop(order.order_id, order.pickup_node, StopType.PICKUP)
                 )
-            elif activity.type == ActivityType.DELIVERY:
+            elif activity_name in {"DELIVERY", "DROPOFF"}:
                 route.stops.append(
                     Stop(order.order_id, order.dropoff_node, StopType.DROPOFF)
                 )

@@ -1,0 +1,25 @@
+# Git and local tooling
+.git
+.gitignore
+.vscode
+.idea
+
+# Python environment and generated files
+venv
+__pycache__
+*.pyc
+.pytest_cache
+
+# Frontend dependencies/build output
+frontend/node_modules
+frontend/dist
+frontend/.vite
+
+# Local caches and credentials
+cache
+api-token.md
+.env
+.env.local
+
+# Generated OSM graph is provided through the Compose bind mount
+data/maps

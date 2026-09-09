@@ -95,6 +95,24 @@ npm run dev
 ```
 Frontend application will be accessible at `http://localhost:5173`.
 
+### 4. Docker Desktop
+
+From the repository root:
+
+```powershell
+docker compose up --build
+```
+
+Open `http://localhost:5173`. The frontend container serves the React build and proxies API requests to the backend container. FastAPI is also available at `http://localhost:8000/docs`.
+
+The OSMnx Hobart graph is persisted in `./data/maps`, so the first real-map request may download the graph, while later container restarts reuse the cache.
+
+To stop the containers:
+
+```powershell
+docker compose down
+```
+
 ---
 
 ## 🧭 Project Roadmap
