@@ -11,12 +11,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-COPY backend/requirements.txt /app/backend/requirements.txt
+COPY requirements.txt /app/backend/requirements.txt
 RUN pip install --no-cache-dir -r /app/backend/requirements.txt
 
 RUN mkdir -p /app/data/maps
-COPY backend /app/backend
-COPY data/maps /app/data/maps
+COPY . /app/backend
+
+# Bake the road graph into the server image so requests do not depend on Overpass.
+RUN python -c "import osmnx as ox; graph = ox.graph_from_point((-42.8826, 147.3257), dist=7000, network_type='drive', simplify=True); ox.save_graphml(graph, filepath='/app/data/maps/hobart_drive.graphml')"
 
 EXPOSE 80
 
