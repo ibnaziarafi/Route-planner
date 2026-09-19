@@ -13,6 +13,7 @@ __pycache__/
 
 # Generated OpenStreetMap cache
 data/maps/*.graphml
+!data/maps/hobart_drive.graphml
 
 # Frontend / Node
 frontend/node_modules/

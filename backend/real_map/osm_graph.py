@@ -25,12 +25,19 @@ def load_hobart_graph(cache_path: Path = CACHE_PATH):
     import osmnx as ox
 
     cache_path.parent.mkdir(parents=True, exist_ok=True)
-    graph = ox.graph_from_point(
-        HOBART_CENTER,
-        dist=HOBART_RADIUS_METERS,
-        network_type="drive",
-        simplify=True,
-    )
+    try:
+        graph = ox.graph_from_point(
+            HOBART_CENTER,
+            dist=HOBART_RADIUS_METERS,
+            network_type="drive",
+            simplify=True,
+        )
+    except Exception as error:
+        raise RuntimeError(
+            "The Hobart road graph is unavailable. Deploy data/maps/hobart_drive.graphml "
+            "with the backend or restore access to the Overpass API."
+        ) from error
+
     ox.save_graphml(graph, filepath=cache_path)
     return graph
 
