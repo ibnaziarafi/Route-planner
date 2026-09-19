@@ -34,3 +34,4 @@
 .real-map-result span, .real-map-result small { color: var(--text-muted); font-size: 0.78rem; }.real-map-result strong { color: #34d399; }.real-map-result small { grid-column: 1 / -1; margin-top: 4px; }
 .real-map-error { margin: 0; }
 @media (max-width: 900px) { .real-map-layout { grid-template-columns: 1fr; } .real-map-view-panel { min-height: 500px; } .real-map-canvas, .real-map-leaflet { min-height: 476px; } }
+@media (max-width: 700px) { .real-map-panel, .real-map-view-panel { padding: 16px; } .real-map-view-panel { min-height: 430px; } .real-map-canvas, .real-map-leaflet { min-height: 406px; } .real-map-heading h1 { font-size: 1.65rem; } }

@@ -1,6 +1,8 @@
 import React from 'react';
 
 export default function Header({ isConnected }) {
+  const currentPath = window.location.pathname;
+
   return (
     <header className="app-header">
       <div className="header-brand">
@@ -16,10 +18,10 @@ export default function Header({ isConnected }) {
         </div>
       </div>
       <nav className="header-nav" aria-label="Primary navigation">
-        <a href="/">Routes</a>
-        <a href="/pdp">PDP</a>
-        <a href="/real-map">Real Map</a>
-        <a href="/real-map-pdp">Real Map PDP</a>
+        <a className={currentPath === '/' ? 'active' : ''} href="/">Routes</a>
+        <a className={currentPath === '/pdp' ? 'active' : ''} href="/pdp">PDP</a>
+        <a className={currentPath === '/real-map' ? 'active' : ''} href="/real-map">Real Map</a>
+        <a className={currentPath === '/real-map-pdp' ? 'active' : ''} href="/real-map-pdp">Real Map PDP</a>
       </nav>
       <div className="connection-badge">
         <span className={`status-dot ${isConnected ? 'online' : 'offline'}`}></span>
