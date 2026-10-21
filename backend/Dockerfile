@@ -17,6 +17,7 @@ RUN pip install --no-cache-dir -r /app/backend/requirements.txt
 RUN mkdir -p /app/data/maps
 COPY backend /app/backend
 COPY data/maps /app/data/maps
+COPY artifacts/learned /app/artifacts/learned
 
 EXPOSE 8000
 

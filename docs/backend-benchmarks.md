@@ -1,0 +1,11 @@
+# PDP benchmark API
+
+`POST /api/benchmarks/compare` accepts a bounded synthetic graph request with 1–8 drivers, 0–20 orders, up to four unique methods (`scratch`, `ortools`, `pyvrp`, `learned`), and a 1–10 second method budget. `mode=save` minimizes activation cost plus per-kilometre cost; `mode=time` minimizes maximum parallel completion including stop service and requires every driver to serve an order. Synthetic edge weights are converted by the explicit `metres_per_unit` assumption (default 1000), so results are illustrative rather than geographic. The comparison builds one directed matrix before solver timing. Schema/input failures are HTTP 422; solver errors are returned as per-method rows.
+
+`GET /api/benchmarks/report` returns `status: not_run` until the manager saves a held-out report at `app/artifacts/learned/benchmark_report.json`. `GET /api/benchmarks/model` reports local model availability without starting training. Learned imports are deferred until requested. Existing `POST /pdp/solve` keeps its prior response shape and accepts optional mode/economic/timing fields.
+
+Canonical values and ranking eligibility come from `backend.pdp.validation`, which independently reconstructs route distances, order accounting, pickup/dropoff sequence, loads and the objective using the original matrix. A solver timeout or incomplete assignment is never reported as a complete feasible result. Solver outputs are comparison estimates, not optimality or operating-ETA claims.
+
+`GET /api/benchmarks/paths` provides a bounded repeated comparison of the existing scan Dijkstra, heap Dijkstra and A* implementations. It uses a fixed endpoint pair (A→T on medium; A→F on small), checks each result against an independent heap-based reference, and collects arc counts in an untimed pass. A* derives an admissible scale from graph edge weights. Hobart PDP coordinates snap by haversine distance and points beyond 500 metres are rejected; missing, negative or non-finite OSM edge lengths are rejected.
+
+The path API legacy field `expansions` counts neighbor-list calls over the complete algorithm call, including A* heuristic-bound setup. The dashboard labels this Neighbor scans; it is not a unique search-expanded-node count. Arc examinations likewise include those setup scans.

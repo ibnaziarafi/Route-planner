@@ -44,11 +44,6 @@ export default function RealMapPage() {
   return (
     <div className="app-container real-map-page">
       <Header isConnected />
-      <div className="page-switcher">
-        <a href="/">Single Route Planner</a>
-        <a href="/pdp">Pickup &amp; Delivery</a>
-        <strong>Real Map</strong>
-      </div>
       <main className="real-map-layout">
         <section className="real-map-panel">
           <div className="real-map-heading">

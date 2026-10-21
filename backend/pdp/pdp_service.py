@@ -22,6 +22,7 @@ class PDPService:
         orders: list[Order],
         algorithm: str = "scratch",
         time_limit_seconds: int = 5,
+        mode: str = "save", economics=None, timing=None,
     ) -> dict:
         """
         Solves the PDP routing problem for given drivers and orders.
@@ -37,13 +38,25 @@ class PDPService:
         # Build distance matrix using Dijkstra
         dm = DistanceMatrix(relevant_nodes, self.graph)
 
+        # Solve PDP using the same canonical mode contract as benchmark API.
+        from backend.pdp.mode_solver import solve_mode
+        if algorithm == "scratch":
+            solution, _ = solve_mode(orders, drivers, dm, mode=mode, economics=economics,
+                                     timing=timing, time_limit_seconds=time_limit_seconds)
         # Solve PDP
-        if algorithm == "ortools":
-            solution = ortools_solve(orders, drivers, dm, time_limit_seconds)
+        elif algorithm == "ortools":
+            solution = ortools_solve(orders, drivers, dm, time_limit_seconds, mode=mode,
+                                     economics=economics, timing=timing)
         elif algorithm == "pyvrp":
-            solution = pyvrp_solve(orders, drivers, dm, time_limit_seconds)
-        else:
-            solution = scratch_solve(orders, drivers, dm)
+            solution = pyvrp_solve(orders, drivers, dm, time_limit_seconds, mode=mode,
+                                   economics=economics, timing=timing)
+        elif algorithm == "learned":
+            from backend.ml.policy import solve as learned_solve
+            solution = learned_solve(orders, drivers, dm, mode=mode, economics=economics,
+                                     timing=timing, time_limit_seconds=time_limit_seconds)
+        from backend.pdp.validation import validate
+        audit = validate(solution, orders, drivers, dm, mode=mode, economics=economics,
+            timing=timing, metres_per_unit=1000.0)
 
         # Expand stop sequences into turn-by-turn road paths
         detailed_routes = []
@@ -93,6 +106,12 @@ class PDPService:
 
         return {
             "algorithm": algorithm,
+            "mode": mode,
+            "status": "feasible" if audit["complete"] and audit["valid"] else ("infeasible" if mode == "time" and len(drivers) > len(orders) else "no_solution" if not audit["metrics"]["served_orders"] else "partial"),
+            "objective_value": audit["objective_value"],
+            "metrics": audit["metrics"],
+            "validation": {"valid": audit["valid"], "complete": audit["complete"], "errors": audit["errors"]},
+            "solver_metadata": solution.metadata,
             "total_distance": round(solution.total_distance, 2),
             "unassigned_orders": solution.unassigned_orders,
             "routes": detailed_routes,

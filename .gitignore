@@ -25,3 +25,7 @@ frontend/.vite/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Local experiment environment
+.venv/
+artifacts/learned/evaluation-progress.jsonl

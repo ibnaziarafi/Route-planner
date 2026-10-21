@@ -73,6 +73,27 @@ def test_real_map_pdp_api_rejects_outside_map_coordinates(monkeypatch):
     assert response.status_code == 400
 
 
+def test_real_map_snapping_uses_metres_and_rejects_missing_or_negative_lengths():
+    graph=make_graph()
+    assert graph.nearest_node(-42.0,147.0)=="1"
+    assert graph.nearest_node(-42.01,147.01) is None
+    invalid=nx.MultiDiGraph(); invalid.add_node(1,x=147,y=-42); invalid.add_node(2,x=147.1,y=-42)
+    invalid.add_edge(1,2)
+    try:
+        OSMGraphAdapter(invalid)
+    except ValueError as error:
+        assert "no length" in str(error)
+    else:
+        raise AssertionError("missing road length must be rejected")
+    invalid[1][2][0]["length"]=-1
+    try:
+        OSMGraphAdapter(invalid)
+    except ValueError as error:
+        assert "invalid length" in str(error)
+    else:
+        raise AssertionError("negative road length must be rejected")
+
+
 def test_real_map_pdp_supports_multiple_drivers_and_orders():
     result = solve_real_map_pdp(
         request(

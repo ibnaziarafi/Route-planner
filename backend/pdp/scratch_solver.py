@@ -141,57 +141,14 @@ def improve_with_or_opt(
     no improving move is found. Keeps pickup-before-dropoff and capacity
     valid at all times.
     """
-    order_by_id = {o.order_id: o for o in orders}
-    driver_by_id = {d.driver_id: d for d in drivers}
-
-    for _ in range(max_passes):
-        improved = False
-
-        for driver_id, route in solution.routes.items():
-            order_ids_in_route = {s.order_id for s in route.stops}
-            for order_id in list(order_ids_in_route):
-                order = order_by_id[order_id]
-
-                # Remove this order's pair from its current route
-                stripped = deepcopy(route)
-                stripped.stops = [s for s in stripped.stops if s.order_id != order_id]
-                stripped.total_distance = route_distance(
-                    stripped, dm, driver_by_id[driver_id].start_node
-                )
-                removal_saving = route.total_distance - stripped.total_distance
-
-                # Try reinserting into every driver (including this one)
-                best_gain = 0.0
-                best_target_driver = None
-                best_new_route = None
-
-                for target_driver in drivers:
-                    base_route = (
-                        stripped
-                        if target_driver.driver_id == driver_id
-                        else solution.routes[target_driver.driver_id]
-                    )
-                    result = _try_insert_order(
-                        base_route, target_driver, order, dm, order_by_id
-                    )
-                    if result is None:
-                        continue
-                    added_cost, candidate_route = result
-                    gain = removal_saving - added_cost
-                    if gain > best_gain + 1e-9:
-                        best_gain = gain
-                        best_target_driver = target_driver.driver_id
-                        best_new_route = candidate_route
-
-                if best_target_driver is not None:
-                    solution.routes[driver_id] = stripped
-                    solution.routes[best_target_driver] = best_new_route
-                    improved = True
-
-        if not improved:
-            break
-
-    return solution
+    from backend.pdp.mode_solver import refine, distance
+    refined = refine(solution, orders, drivers, dm, mode="save",
+        economics={"activation_cost": 0.0, "cost_per_km": 1.0},
+        timing={"speed_kph": 30.0, "service_minutes_per_stop": 0.0},
+        metres_per_unit=1000.0, max_iterations=max(1, max_passes * max(1, len(orders))))
+    for driver in drivers:
+        refined.routes[driver.driver_id].total_distance = distance(refined.routes[driver.driver_id], driver, dm)
+    return refined
 
 
 def solve(orders: list[Order], drivers: list[Driver], dm: DistanceMatrix) -> Solution:

@@ -19,6 +19,7 @@ from backend.services.route_service import RouteService
 from backend.services.route_service_v2 import RouteServiceV2
 from backend.real_map.map_router import router as real_map_router
 from backend.real_map_pdp.map_pdp_router import router as real_map_pdp_router
+from backend.benchmarks.router import router as benchmark_router
 
 app = FastAPI(
     title="Route Planner API - Phase 2",
@@ -37,6 +38,7 @@ app.add_middleware(
 
 app.include_router(real_map_router)
 app.include_router(real_map_pdp_router)
+app.include_router(benchmark_router)
 
 route_service = RouteService()
 route_service_v2 = RouteServiceV2()
@@ -137,6 +139,9 @@ def solve_pdp(request: PDPRequest):
         orders,
         algorithm=request.algorithm,
         time_limit_seconds=request.time_limit_seconds,
+        mode=request.mode,
+        economics={"activation_cost": request.activation_cost, "cost_per_km": request.cost_per_km},
+        timing={"speed_kph": request.speed_kph, "service_minutes_per_stop": request.service_minutes_per_stop},
     )
 
 if __name__ == "__main__":

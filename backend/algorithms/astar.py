@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any
 from backend.structures.min_heap import MinHeap
 from backend.algorithms.heuristics import euclidean_distance
+import math
 
 if TYPE_CHECKING:
     from backend.graph.graph import Graph
@@ -35,8 +36,23 @@ def astar(
 
     g_score[start] = 0.0
 
+    # Scale visual coordinates from the graph itself. The minimum edge-cost /
+    # Euclidean-edge ratio is an admissible lower bound; zero-cost geometric
+    # edges safely reduce the heuristic to Dijkstra's zero heuristic.
+    ratios = []
+    for source in nodes:
+        for neighbor, weight in graph.get_neighbors(source):
+            p1, p2 = positions.get(source), positions.get(neighbor)
+            if p1 is None or p2 is None: continue
+            x1,y1=(p1.get("x",0),p1.get("y",0)) if isinstance(p1,dict) else p1[:2]
+            x2,y2=(p2.get("x",0),p2.get("y",0)) if isinstance(p2,dict) else p2[:2]
+            geometric=math.hypot(x2-x1,y2-y1)
+            if geometric > 0: ratios.append(weight/geometric)
+    lower_bound=min(ratios,default=0.0)
+    scale_factor=(1/lower_bound) if lower_bound > 0 else float("inf")
+
     # 4. f(start) = g(start) + h(start, destination)
-    h_start = euclidean_distance(start, destination, positions)
+    h_start = euclidean_distance(start, destination, positions, scale_factor=scale_factor)
     f_start = g_score[start] + h_start
 
     min_heap = MinHeap()
@@ -50,7 +66,7 @@ def astar(
             break
 
         # Calculate current heuristic to check for stale entries in priority queue
-        h_curr = euclidean_distance(current, destination, positions)
+        h_curr = euclidean_distance(current, destination, positions, scale_factor=scale_factor)
         if current_f > g_score[current] + h_curr:
             continue
 
@@ -63,7 +79,7 @@ def astar(
                 previous[neighbor] = current
 
                 # f(n) = g(n) + h(n)
-                h_neighbor = euclidean_distance(neighbor, destination, positions)
+                h_neighbor = euclidean_distance(neighbor, destination, positions, scale_factor=scale_factor)
                 f_neighbor = tentative_g + h_neighbor
 
                 min_heap.push(f_neighbor, neighbor)

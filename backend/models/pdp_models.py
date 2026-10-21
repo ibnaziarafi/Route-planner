@@ -16,7 +16,12 @@ class PDPOrderRequest(BaseModel):
 
 class PDPRequest(BaseModel):
     graph_type: str = Field("medium", pattern="^(small|medium)$")
-    algorithm: str = Field("scratch", pattern="^(scratch|ortools|pyvrp)$")
-    time_limit_seconds: int = Field(5, ge=1, le=60)
+    algorithm: str = Field("scratch", pattern="^(scratch|ortools|pyvrp|learned)$")
+    time_limit_seconds: float = Field(5, ge=1, le=10, allow_inf_nan=False)
+    mode: str = Field("save", pattern="^(save|time)$")
+    activation_cost: float = Field(20, ge=0, allow_inf_nan=False)
+    cost_per_km: float = Field(.5, ge=0, allow_inf_nan=False)
+    speed_kph: float = Field(30, gt=0, allow_inf_nan=False)
+    service_minutes_per_stop: float = Field(1, ge=0, allow_inf_nan=False)
     drivers: list[PDPDriverRequest] = Field(..., min_length=1)
     orders: list[PDPOrderRequest] = Field(default_factory=list)

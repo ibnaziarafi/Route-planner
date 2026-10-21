@@ -7,6 +7,8 @@ from backend.pdp.models import Driver, Order
 from backend.pdp.ortools_solver import solve as solve_ortools
 from backend.pdp.pyvrp_solver import solve as solve_pyvrp
 from backend.pdp.scratch_solver import solve as solve_scratch
+from backend.pdp.mode_solver import solve_mode
+from backend.pdp.validation import validate
 from backend.real_map.osm_graph import get_hobart_adapter
 from backend.real_map_pdp.real_map_distance_matrix import RealMapDistanceMatrix
 
@@ -49,14 +51,25 @@ def solve_real_map_pdp(request, graph=None) -> dict:
     relevant_nodes = sorted(set(locations))
     matrix = RealMapDistanceMatrix(relevant_nodes, graph)
     if request.solver == "scratch":
-        solution = solve_scratch(orders, drivers, matrix)
+        solution, _ = solve_mode(orders, drivers, matrix, mode=request.mode,
+            economics=request.economics.model_dump(), timing=request.timing.model_dump(), metres_per_unit=1,
+            time_limit_seconds=request.time_limit_seconds)
     elif request.solver == "ortools":
-        solution = solve_ortools(orders, drivers, matrix, request.time_limit_seconds)
+        solution = solve_ortools(orders, drivers, matrix, request.time_limit_seconds,
+            mode=request.mode, economics=request.economics.model_dump(), timing=request.timing.model_dump(), metres_per_unit=1)
     elif request.solver == "pyvrp":
-        solution = solve_pyvrp(orders, drivers, matrix, request.time_limit_seconds)
+        solution = solve_pyvrp(orders, drivers, matrix, request.time_limit_seconds,
+            mode=request.mode, economics=request.economics.model_dump(), timing=request.timing.model_dump(), metres_per_unit=1)
+    elif request.solver == "learned":
+        from backend.ml.policy import solve as solve_learned
+        solution = solve_learned(orders, drivers, matrix, mode=request.mode,
+            economics=request.economics.model_dump(), timing=request.timing.model_dump(), metres_per_unit=1,
+            time_limit_seconds=request.time_limit_seconds)
     else:
         raise ValueError("Unsupported PDP solver.")
 
+    audit = validate(solution, orders, drivers, matrix, mode=request.mode,
+        economics=request.economics.model_dump(), timing=request.timing.model_dump(), metres_per_unit=1)
     driver_by_id = {driver.driver_id: driver for driver in drivers}
     routes = []
     for driver_id, route in solution.routes.items():
@@ -106,7 +119,16 @@ def solve_real_map_pdp(request, graph=None) -> dict:
     return {
         "algorithm": request.algorithm,
         "solver": request.solver,
-        "total_distance_km": round(solution.total_distance / 1000, 3),
+        "mode": request.mode,
+        "status": "feasible" if audit["complete"] and audit["valid"] else ("infeasible" if request.mode == "time" and len(drivers) > len(orders) else "no_solution" if not audit["metrics"]["served_orders"] else "partial"),
+        "objective_value": audit["objective_value"],
+        "metrics": audit["metrics"],
+        "validation": {"valid": audit["valid"], "complete": audit["complete"], "errors": audit["errors"]},
+        "assumptions": {"metres_per_unit": 1, "snap_limit_metres": graph.max_snap_distance_m,
+            "speed_kph": request.timing.speed_kph,
+            "service_minutes_per_stop": request.timing.service_minutes_per_stop,
+            "open_routes": True, "simultaneous_starts": True},
+        "total_distance_km": round(audit["metrics"]["total_distance_km"], 3) if audit["metrics"]["total_distance_km"] is not None else None,
         "routes": routes,
         "unassigned_orders": solution.unassigned_orders,
         "positions": positions,

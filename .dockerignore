@@ -6,6 +6,7 @@
 
 # Python environment and generated files
 venv
+.venv
 __pycache__
 *.pyc
 .pytest_cache
@@ -22,4 +23,5 @@ api-token.md
 .env.local
 
 # Generated OSM graph is provided through the Compose bind mount
-data/maps
+data/maps/*
+!data/maps/hobart_drive.graphml

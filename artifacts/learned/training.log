@@ -1,0 +1,21 @@
+save {'episode': 50, 'mean_training_reward_last50': -2.0401, 'weight_l2': 2.0341761893461277}
+save {'episode': 100, 'mean_training_reward_last50': -2.0063, 'weight_l2': 2.2447986000986697, 'validation_score': 1.3708333333333333}
+save {'episode': 150, 'mean_training_reward_last50': -2.1150999999999995, 'weight_l2': 2.069486392392824}
+save {'episode': 200, 'mean_training_reward_last50': -1.9040999999999997, 'weight_l2': 2.7875817295481613}
+save {'episode': 250, 'mean_training_reward_last50': -1.9724999999999997, 'weight_l2': 2.74415050279898, 'validation_score': 1.1591666666666667}
+save {'episode': 300, 'mean_training_reward_last50': -2.0397, 'weight_l2': 3.17044854693581}
+save {'episode': 350, 'mean_training_reward_last50': -2.1146999999999996, 'weight_l2': 3.3213999256243736}
+save {'episode': 400, 'mean_training_reward_last50': -1.7498999999999998, 'weight_l2': 3.8296847720625937}
+save {'episode': 450, 'mean_training_reward_last50': -1.6036000000000001, 'weight_l2': 4.15912876130936}
+save {'episode': 500, 'mean_training_reward_last50': -2.0018999999999996, 'weight_l2': 4.213409463828714, 'validation_score': 0.8208333333333333}
+time {'episode': 50, 'mean_training_reward_last50': -2.315888888888889, 'weight_l2': 2.2356518414914346}
+time {'episode': 100, 'mean_training_reward_last50': -1.8090000000000002, 'weight_l2': 3.3684063880062727, 'validation_score': 1.1893518518518518}
+time {'episode': 150, 'mean_training_reward_last50': -1.7136666666666667, 'weight_l2': 3.5059946116283935}
+time {'episode': 200, 'mean_training_reward_last50': -1.5742222222222222, 'weight_l2': 4.290345537346074}
+time {'episode': 250, 'mean_training_reward_last50': -1.6002222222222222, 'weight_l2': 5.38161485176133, 'validation_score': 1.1814814814814814}
+time {'episode': 300, 'mean_training_reward_last50': -1.7260000000000002, 'weight_l2': 5.680253877230467}
+time {'episode': 350, 'mean_training_reward_last50': -1.7287777777777777, 'weight_l2': 6.547671566953366}
+time {'episode': 400, 'mean_training_reward_last50': -1.654888888888889, 'weight_l2': 7.5202193153600625}
+time {'episode': 450, 'mean_training_reward_last50': -1.7506666666666668, 'weight_l2': 8.103371427225468}
+time {'episode': 500, 'mean_training_reward_last50': -1.6814444444444445, 'weight_l2': 8.209311274000019, 'validation_score': 1.1541666666666666}
+{"artifact": "/Users/rafi/Documents/Codex/2026-10-12/i-x20/outputs/Zerobyte team/projects/route-planner/app/artifacts/learned/policy.json", "sha256": "ec9546c9ae2049a7d644b3d58bf50fb44ecb8be4a5cdecfc8398b0b198274985", "elapsed_seconds": 0.4038068329973612, "selection": {"save": {"episode": 500, "validation_score": 0.8208333333333333}, "time": {"episode": 500, "validation_score": 1.1541666666666666}}}

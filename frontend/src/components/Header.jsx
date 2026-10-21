@@ -18,10 +18,11 @@ export default function Header({ isConnected }) {
         </div>
       </div>
       <nav className="header-nav" aria-label="Primary navigation">
-        <a className={currentPath === '/' ? 'active' : ''} href="/">Routes</a>
-        <a className={currentPath === '/pdp' ? 'active' : ''} href="/pdp">PDP</a>
-        <a className={currentPath === '/real-map' ? 'active' : ''} href="/real-map">Real Map</a>
-        <a className={currentPath === '/real-map-pdp' ? 'active' : ''} href="/real-map-pdp">Real Map PDP</a>
+        <a className={currentPath === '/' || currentPath === '/route-planner' ? 'active' : ''} aria-current={currentPath === '/' || currentPath === '/route-planner' ? 'page' : undefined} href="/">Routes</a>
+        <a className={currentPath === '/pdp' ? 'active' : ''} aria-current={currentPath === '/pdp' ? 'page' : undefined} href="/pdp">PDP</a>
+        <a className={currentPath === '/real-map' ? 'active' : ''} aria-current={currentPath === '/real-map' ? 'page' : undefined} href="/real-map">Real Map</a>
+        <a className={currentPath === '/real-map-pdp' ? 'active' : ''} aria-current={currentPath === '/real-map-pdp' ? 'page' : undefined} href="/real-map-pdp">Real Map PDP</a>
+        <a className={currentPath === '/dashboard' ? 'active' : ''} aria-current={currentPath === '/dashboard' ? 'page' : undefined} href="/dashboard">Compare</a>
       </nav>
       <div className="connection-badge">
         <span className={`status-dot ${isConnected ? 'online' : 'offline'}`}></span>

@@ -69,6 +69,7 @@ class Solution:
     """The full assignment: every driver's route, plus bookkeeping."""
     routes: dict[int, Route]
     unassigned_orders: list[int] = field(default_factory=list)
+    metadata: dict = field(default_factory=dict)
 
     @property
     def total_distance(self) -> float:

@@ -1,3 +1,6 @@
+from math import isfinite
+
+
 class Graph:
     """
     Adjacency list representation of a weighted, undirected graph.
@@ -16,6 +19,8 @@ class Graph:
         Adds a weighted edge between node u and node v.
         Creates nodes u and v if they do not exist.
         """
+        if not isfinite(weight) or weight < 0:
+            raise ValueError("Edge weight must be finite and non-negative.")
         self.add_node(u)
         self.add_node(v)
         
